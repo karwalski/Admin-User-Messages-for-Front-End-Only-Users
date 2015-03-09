@@ -1,15 +1,24 @@
-<?php 
+<?php
 /*
- * Plugin Name: Admin-User-Messages
- * Plugin URI: http://www.karstenm.de/wordpress/plugins/admin_user_messages.zip
- * Description: Plugin for communication between Admin and single User.
- * Version: 0.1.6
- * Author: Michael Karsten
- * Author URI: http://www.karstenm.de/
- * License: GPL3
+ Plugin Name: Admin-User-Messages
+ Text Domain: miningproducts-mincal
+ Plugin URI: http://www.karstenm.de/wordpress/plugins/admin_user_messages.zip
+ Description: Plugin for communication between Admin and single User.
+ Version: 0.2
+ Author: Karwalski
+ Author URI: http://karwalski.net/
+ License: GPLv3
+ Depends: EWD_FEUP
  */
 
- 
+/*
+Modified version of the original plugin 'Admin User Messages'
+Original version at time of modification was 0.1.6
+https://wordpress.org/plugins/admin-user-messages/
+By Michael Karsten under GPLv3
+
+ */
+
 
 register_activation_hook( __FILE__, 'pu_create_plugin_tables' );
 
@@ -21,7 +30,7 @@ function pu_create_plugin_tables()
 
     $table_name = $wpdb->prefix . 'admin_user_message';
     $table_name_settings = $wpdb->prefix . 'admin_user_message_settings';
-    
+
     $sql = "CREATE TABLE $table_name (
             `auto` int(11) NOT NULL AUTO_INCREMENT,
             `sender` int(11) NOT NULL,
@@ -33,17 +42,17 @@ function pu_create_plugin_tables()
             `subject` varchar(150) NOT NULL,
             PRIMARY KEY (`auto`)
           );
-          
-          
-            
+
+
+
         CREATE TABLE $table_name_settings (
           `auto` int(11) NOT NULL AUTO_INCREMENT,
           `item` varchar(255) NOT NULL,
           `value` varchar(255) NOT NULL,
           PRIMARY KEY (`auto`)
         );
-        
-                
+
+
         INSERT INTO $table_name_settings (`auto`, `item`, `value`) VALUES
         (1, 'table_color_header', '#efefef'),
         (2, 'term_quantity_message', 'Number of messages'),
@@ -73,30 +82,30 @@ function pu_create_plugin_tables()
         (26, 'btn_read_message', 'www.yourdomain.com/your-read-messages-page'),
         (27, 'btn_answer_message', 'www.yourdomain.com/your-answer-messages-page'),
         (28, 'alert_missing_subject', 'There is no subject for your message'),
-        (29, 'alert_missing_receiver', 'Your message must have a receiver'),        
+        (29, 'alert_missing_receiver', 'Your message must have a receiver'),
         (30, 'alert_missing_message', 'Your message is empty');
          ";
-        
-        
+
+
         $sqlUdpate1 = "INSERT INTO $table_name_settings (`auto`, `item`, `value`) VALUES
         (28, 'alert_missing_subject', 'There is no subject for your message'),
-        (29, 'alert_missing_receiver', 'Your message must have a receiver'),        
+        (29, 'alert_missing_receiver', 'Your message must have a receiver'),
         (30, 'alert_missing_message', 'Your message is empty');
         ";
-    
+
         $sqlUdpate2 = "INSERT INTO $table_name_settings (`auto`, `item`, `value`) VALUES
         (31, 'term_search_string', 'Your search'),
         (32, 'term_search_button', 'Search'),
-        (33, 'btn_search', 'www.yourdomain.com/your-search-page');        
+        (33, 'btn_search', 'www.yourdomain.com/your-search-page');
         ";
 
         require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
         dbDelta( $sql );
         dbDelta( $sqlUdpate1 );
-        dbDelta( $sqlUdpate2 );        
-          
+        dbDelta( $sqlUdpate2 );
+
 }
- 
+
 add_action('wp_print_styles', 'add_my_styles2', 100);
 function add_my_styles2() {
 wp_register_style( 'eigene-css', site_url() .'/wp-content/plugins/admin-user-messages/css/style.css');

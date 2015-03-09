@@ -4,124 +4,137 @@
 function admin_user_messages_write_message($content) {
 
     global $wpdb;
-    global $current_user;
-    get_currentuserinfo();
+    // global $current_user;
+    // get_currentuserinfo();
+
+
+    // Read user ID from the Front End User plugin Level 10 is Administrator
+
+   					global $ewd_feup_user_table_name, $ewd_feup_levels_table_name, $ewd_feup_user_fields_table_name;
+   					$UserCookie = CheckLoginCookie();
+   					$User = $wpdb->get_row($wpdb->prepare("SELECT * FROM $ewd_feup_user_table_name WHERE Username='%s'", $UserCookie['Username']));
+				$current_user->ID = $User->User_ID;
+
     $role = get_user_role_aum();
-    
-        include('admin_user_messages_settings.php');    
-     
+
+        include('admin_user_messages_settings.php');
+
     $table_name = $wpdb->prefix . 'admin_user_message';
-    $table_users = $wpdb->prefix . 'users';
-     
+    //$table_users = $wpdb->prefix . 'users';
+
+	// Read from FEU instead of blog users
+	$table_users = $ewd_feup_user_table_name;
+
 	if(isset($_POST['submitted'])) {
 		$fromSender = $_POST['fromSender'];
 		$toReceiver = $_POST['toReceiver'];
 		$subject = $_POST['subject'];
 		$messagetext = $_POST['messagetext'];
 		$todayDate = date('Y-m-d');
-		$timestamp = time() + 3600;
-		$timeSend = date("H:i:s",$timestamp); 
-		
+		$timestamp = time() + 28800; // +8GMT
+		$timeSend = date("H:i:s",$timestamp);
+
 		$query = "INSERT INTO $table_name (auto, sender, receiver, time, date, message, status, subject)
 		VALUES ('','{$fromSender}','{$toReceiver}', '$timeSend', '{$todayDate}', '$messagetext', '0', '$subject')";
 
 		$wpdb->query($query);
- 
-		
+
+
 	    echo "<span>" . $aum_term_msg_successfull_sent . "</span>";
             echo "<p>&nbsp;</p>";
-	    
-	    
-	
+
+
+
 ?>
     <script>
 	function gotoInbox() {
 	    document.location.href = "<?php echo 'http://' . $aum_btn_back_to_inbox; ?>";
 	}
     </script>
-<?php	
-	
-	
+<?php
+
+
             echo "<input type='button' class='aum_button' value='" . $aum_btn_back_to_inbox_text . "' onclick='gotoInbox();'>";
-            echo "<p>&nbsp;</p>";	
-		
+            echo "<p>&nbsp;</p>";
+
 	}
-	
+
 	if(!isset($_POST['submitted'])) {
-		
-		
-		$queryReceiverMail = "SELECT user_email FROM $table_users WHERE ID = '$toReceiver'";
+
+
+		$queryReceiverMail = "SELECT Username FROM $table_users WHERE User_ID = '$toReceiver'";
 		$resultReceiverMail = mysql_query($queryReceiverMail);
-		
+
 		while($rowReceiverMail = mysql_fetch_row($resultReceiverMail)) {
-			
+
 			$siteurl = site_url();
 			$utext = utf8_decode($aum_mail_message);
-			
 
-			
-			
+
+
+
 			$mailtext = '
-			
-			
-			
+
+
+
 			<head>
 			    <title></title>
 			</head>
-			 
-			 
+
+
 			<style>
 			    font-family:calibri, verdana, arial, helvetica;
 			    font-size:14px;
 			</style>
-			
+
 			<body>
-			 
- 
-			 
+
+
+
 			' . nl2br($utext) .'
-			
+
 			<br><br>
-			
+
 			<a href="' . $siteurl . '">' . $siteurl . '</a>
-			 
+
 			</body>
 			</html>
 
 
 
 ';
-			
-			
-			
-			
+
+
+
+
 		$empfaenger = $rowReceiverMail[0]; //Mailadresse
 		$absender   = $aum_mail_sender_mail;
 		$betreff    = "Neue Nachricht auf " . $siteurl;
 		$antwortan  = $aum_mail_sender_mail;
-		 
+
 		$header  = "MIME-Version: 1.0\r\n";
 		$header .= "Content-type: text/html; charset=iso-8859-1\r\n";
-		 
+
 		$header .= "From: $absender\r\n";
 		$header .= "Reply-To: $antwortan\r\n";
 		// $header .= "Cc: $cc\r\n";  // falls an CC gesendet werden soll
 		$header .= "X-Mailer: PHP ". phpversion();
-		 
-		mail( $empfaenger,
+
+// disable send email notification
+		// mail( $empfaenger,
 		      $betreff,
 		      $mailtext,
 		      $header);
 
 
-			
-	 
+
+
 	}
-?>    
+?>
 
 
 	<script>
-		
+
 		function setReceiver (x) {
 			document.getElementById("toReceiver").value = x;
 		}
@@ -129,61 +142,61 @@ function admin_user_messages_write_message($content) {
 		function sendMessage () {
 			if (document.getElementById("toReceiver").value == '') {
 <?php
-				echo 'alert("' . $aum_msg_missing_receiver . '")';				
-?>				
+				echo 'alert("' . $aum_msg_missing_receiver . '")';
+?>
 				document.getElementById("toReceiver").focus();
 				return;
 			}
 			if (document.getElementById("subject").value == '') {
 <?php
-				echo 'alert("' . $aum_msg_missing_subject . '")';				
-?>	
+				echo 'alert("' . $aum_msg_missing_subject . '")';
+?>
 				document.getElementById("subject").focus();
 				return;
 			}
 			if (document.getElementById("messagetext").value == '') {
 <?php
-				echo 'alert("' . $aum_msg_missing_message . '")';				
-?>	
+				echo 'alert("' . $aum_msg_missing_message . '")';
+?>
 				document.getElementById("messagetext").focus();
 				return;
 			}
 			document.writeMessage.submit();
 		}
-		
+
 	</script>
 
 
 
- 
-    <form name="writeMessage" action="<?php the_permalink(); ?>" method="post">		
+
+    <form name="writeMessage" action="<?php the_permalink(); ?>" method="post">
 <?php
 	if ($role == 'administrator' ) {
 ?>
         <input type="hidden" value="" id="toReceiver" name="toReceiver">
 <?php
-	} else {	
+	} else {
 ?>
-        <input type="hidden" value="1" id="toReceiver" name="toReceiver">	
+        <input type="hidden" value="1" id="toReceiver" name="toReceiver">
 <?php
 	}
-?>				
+?>
 	<input type="hidden" value="<?php echo $current_user->ID; ?>" id="fromSender" name="fromSender">
 	<input type="hidden" name="submitted" id="submitted" value="true" />
 
 
-				
+
 		<table border="0" cellpadding="5" cellspacing="5">
-			
+
 			<tr>
 				<td><a href="<?php echo 'http://' . $aum_btn_back_to_inbox; ?>"><?php echo $aum_term_link_inbox; ?></a> | <span class="nav_strong"><?php echo $aum_term_link_post_a_message; ?></span> | <a href="<?php echo 'http://' . $aum_btn_back_to_send_msg; ?>"><?php echo $aum_term_link_sent_messages; ?></a> | <a href="<?php echo 'http://' . $aum_btn_search; ?>"><?php echo $aum_term_search_button; ?></a></td>
-			
+
 			</tr>
-			
-			
+
+
 			<tr valign="top">
- 
-				<td>				
+
+				<td>
 					<table border="0" cellpadding="0" cellspacing="0">
 						<tr valign="top">
 							<td><?php echo $aum_term_to; ?>: </td>
@@ -192,17 +205,17 @@ function admin_user_messages_write_message($content) {
 <?php
 
 
- 
+
 
 
 
 								if( current_user_can('administrator') ) {
 ?>
-									<select style="width:40%" id="userselection" name="usersselection" size="5" onclick="setReceiver(this.value);">							
-<?php   
-									
+									<select style="width:40%" id="userselection" name="usersselection" size="5" onclick="setReceiver(this.value);">
+<?php
+
 									//displays users
-									
+
 									/*$blogusers = get_users_of_blog();
 									if ($blogusers) {
 									  foreach ($blogusers as $bloguser) {
@@ -211,33 +224,33 @@ function admin_user_messages_write_message($content) {
 									  }
 									}
 									*/
-									
-									
-									
+
+
+
 									$blogusers = get_users('blog_id=1&orderby=nicename&role=subscriber');
 									foreach ($blogusers as $user) {
 									    echo '<option value=' . $user->ID . '>' . $user->display_name . '</option>';
-									    
+
 									}
-									
-    
+
+
 ?>
-							
-							
-							
-							
-							
-									
+
+
+
+
+
+
 <?php
 								} else {
 									// "Michael Karsten";
 ?>
-									<select style="width:40%" class='aum_text' id="userselection" name="usersselection" size="5" onclick="setReceiver(this.value);">	
+									<select style="width:40%" class='aum_text' id="userselection" name="usersselection" size="5" onclick="setReceiver(this.value);">
 <?php
 									$admin = get_users('blog_id=1&orderby=nicename&role=administrator');
 									foreach ($admin as $auser) {
 									    echo '<option value=' . $auser->ID . '>' . $auser->display_name . '</option>';
-									    
+
 									}
 								}
 ?>
@@ -258,13 +271,13 @@ function admin_user_messages_write_message($content) {
 							<td>&nbsp;</td>
 							<td colspan="2"><input type="button" class='aum_button' value="<?php echo $aum_btn_send_msg_text; ?>" onclick="sendMessage();"></td>
 						</tr>
-					</table>					
-					
+					</table>
+
 				</td>
 			</tr>
-		</table>		
+		</table>
     </form>
-    
+
 <?php
 	}
 }
