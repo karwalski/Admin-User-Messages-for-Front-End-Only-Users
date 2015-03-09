@@ -1,10 +1,9 @@
 <?php
 /*
  Plugin Name: Admin-User-Messages
- Text Domain: miningproducts-mincal
- Plugin URI: http://www.karstenm.de/wordpress/plugins/admin_user_messages.zip
+ Text Domain: admin-user-messages
  Description: Plugin for communication between Admin and single User.
- Version: 0.2
+ Version: 0.2.0
  Author: Karwalski
  Author URI: http://karwalski.net/
  License: GPLv3

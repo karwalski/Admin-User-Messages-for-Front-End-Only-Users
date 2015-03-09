@@ -120,13 +120,14 @@ function admin_user_messages_write_message($content) {
 		// $header .= "Cc: $cc\r\n";  // falls an CC gesendet werden soll
 		$header .= "X-Mailer: PHP ". phpversion();
 
+/*
 // disable send email notification
 		// mail( $empfaenger,
 		      $betreff,
 		      $mailtext,
 		      $header);
 
-
+  */
 
 
 	}
@@ -142,21 +143,21 @@ function admin_user_messages_write_message($content) {
 		function sendMessage () {
 			if (document.getElementById("toReceiver").value == '') {
 <?php
-				echo 'alert("' . $aum_msg_missing_receiver . '")';
+				echo 'alert("' . $aum_msg_missing_receiver . '");';
 ?>
 				document.getElementById("toReceiver").focus();
 				return;
 			}
 			if (document.getElementById("subject").value == '') {
 <?php
-				echo 'alert("' . $aum_msg_missing_subject . '")';
+				echo 'alert("' . $aum_msg_missing_subject . '");';
 ?>
 				document.getElementById("subject").focus();
 				return;
 			}
 			if (document.getElementById("messagetext").value == '') {
 <?php
-				echo 'alert("' . $aum_msg_missing_message . '")';
+				echo 'alert("' . $aum_msg_missing_message . '");';
 ?>
 				document.getElementById("messagetext").focus();
 				return;
@@ -209,7 +210,8 @@ function admin_user_messages_write_message($content) {
 
 
 
-								if( current_user_can('administrator') ) {
+								// if( current_user_can('administrator') ) {
+								if( $role == 'administrator' ) {
 ?>
 									<select style="width:40%" id="userselection" name="usersselection" size="5" onclick="setReceiver(this.value);">
 <?php
@@ -226,13 +228,32 @@ function admin_user_messages_write_message($content) {
 									*/
 
 
-
+									/*
+									Before modification
 									$blogusers = get_users('blog_id=1&orderby=nicename&role=subscriber');
 									foreach ($blogusers as $user) {
 									    echo '<option value=' . $user->ID . '>' . $user->display_name . '</option>';
 
 									}
+									*/
 
+
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'EWD_FEUP_Users';
+    $blogusers = $wpdb->get_results( "SELECT * FROM " . $table_name );
+
+									foreach ($blogusers as $user) {
+									    echo '<option value=' . $user->User_ID . '>';
+
+									    $table_name = $wpdb->prefix . 'EWD_FEUP_User_Fields';
+										$FirstName = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_name WHERE User_ID='%d' AND Field_ID=1" , $user->User_ID));
+										$LastName = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_name WHERE User_ID='%d' AND Field_ID=2" , $user->User_ID));
+            							echo $FirstName->Field_Value . ' ' . $LastName->Field_Value  ;
+
+
+									   echo '</option>';
+
+									}
 
 ?>
 
@@ -247,11 +268,39 @@ function admin_user_messages_write_message($content) {
 ?>
 									<select style="width:40%" class='aum_text' id="userselection" name="usersselection" size="5" onclick="setReceiver(this.value);">
 <?php
-									$admin = get_users('blog_id=1&orderby=nicename&role=administrator');
-									foreach ($admin as $auser) {
-									    echo '<option value=' . $auser->ID . '>' . $auser->display_name . '</option>';
+									// Only for Level 10 users in front end plugin.
+									// $admin = get_users('blog_id=1&orderby=nicename&role=administrator');
+
+									/*
+																		foreach ($admin as $auser) {
+																		    echo '<option value=' . $auser->ID . '>' . $auser->display_name . '</option>';
 
 									}
+									*/
+
+
+									    global $wpdb;
+									    $table_name = $wpdb->prefix . 'EWD_FEUP_Users';
+									    $adminLevelID = '3';
+									    $admin = $wpdb->get_results( "SELECT * FROM $table_name WHERE Level_ID = $adminLevelID" );
+
+																		foreach ($admin as $auser) {
+																		    echo '<option value=' . $auser->User_ID . '>';
+
+																		    $table_name = $wpdb->prefix . 'EWD_FEUP_User_Fields';
+																			$FirstName = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_name WHERE User_ID='%d' AND Field_ID=1" , $auser->User_ID));
+																			$LastName = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_name WHERE User_ID='%d' AND Field_ID=2" , $auser->User_ID));
+									            							echo $FirstName->Field_Value . ' ' . $LastName->Field_Value  ;
+
+
+																		   echo '</option>';
+
+									}
+
+
+
+
+
 								}
 ?>
 							</select>

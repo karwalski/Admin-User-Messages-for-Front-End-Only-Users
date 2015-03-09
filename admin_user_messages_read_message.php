@@ -93,7 +93,7 @@ function admin_user_read_message($content) {
 	if(isset($_POST['submitted'])) {
 
 				while($row = mysql_fetch_row($result)) {
-					$querySender = "SELECT Username FROM $table_users WHERE ID = '$row[1]'";
+					$querySender = "SELECT Username FROM $table_users WHERE User_ID = '$row[1]'";
 					$resultSender = mysql_query($querySender);
 
 					    while($rowSender = mysql_fetch_row($resultSender)) {

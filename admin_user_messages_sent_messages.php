@@ -24,13 +24,6 @@ function admin_user_messages_sent_messages($content) {
 
 
 
-    /*
-    // Caution, this line in original file references a specific multisite install, do not use without WP prefix
-	//finde alle Nachrichten, die an current_user versendet hat
-	$query = "SELECT * FROM yojoma_admin_user_messages WHERE sender = '$current_user->ID' ORDER BY date DESC, time DESC";
-        $result = mysql_query($query);
-	$num_rows = mysql_num_rows($result);
-    */
 
 
     if(isset($_POST['pageingSubmitted'])) {
@@ -187,7 +180,7 @@ function admin_user_messages_sent_messages($content) {
 						if ($num_rows >= '1') {
 							while($row = mysql_fetch_row($result)) {
 								//finde den EmpfŠnger Nickname aus der Usertabelle
-								$queryReceiver = "SELECT User FROM $table_users WHERE User_ID = '$row[2]'";
+								$queryReceiver = "SELECT Username FROM $table_users WHERE User_ID = '$row[2]'";
 								$resultReceiver = mysql_query($queryReceiver);
 ?>
 					<tr valign="top">

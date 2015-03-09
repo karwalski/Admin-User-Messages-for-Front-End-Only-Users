@@ -9,7 +9,7 @@
 		// $user_roles = $current_user->roles;
 		// $user_role = array_shift($user_roles);
 
-	// Read user level from the Front End User plugin Level 10 is Administrator
+	// Read user level from the Front End User plugin
 
 				global $wpdb;
 				global $ewd_feup_user_table_name, $ewd_feup_levels_table_name, $ewd_feup_user_fields_table_name;
@@ -18,7 +18,9 @@
 				$UserID = $User->User_ID;
 				$UserLevel = $User->Level_ID;
 
-				if ($User->Level_ID == 10) {
+				// Set level ID, you can use OR statements to seperate multiple
+				$adminLevelID = '3';
+				if ($User->Level_ID == $adminLevelID) {
 				$user_role = 'administrator';
 				}
 				else

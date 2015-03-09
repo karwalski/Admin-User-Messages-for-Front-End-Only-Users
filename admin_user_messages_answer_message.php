@@ -113,13 +113,15 @@ function admin_user_answer_message($content) {
 		// $header .= "Cc: $cc\r\n";  // falls an CC gesendet werden soll
 		$header .= "X-Mailer: PHP ". phpversion();
 
-		 Disable email notifications
+
+/*
+// disable send email notification
 		// mail( $empfaenger,
 		      $betreff,
 		      $mailtext,
 		      $header);
 
-
+  */
 
 
 
@@ -144,7 +146,7 @@ function admin_user_answer_message($content) {
 
             if (document.getElementById("subjectOldAndNew").value == '') {
 <?php
-				echo 'alert("' . $aum_msg_missing_subject . '")';
+				echo 'alert("' . $aum_msg_missing_subject . '");';
 ?>
                 document.getElementById("subjectOldAndNew").focus();
                 return;

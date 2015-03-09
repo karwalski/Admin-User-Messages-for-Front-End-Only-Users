@@ -182,7 +182,7 @@ function admin_user_messages_inbox($content) {
 						if ($num_rows >= '1') {
 							while($row = mysql_fetch_row($result)) {
 								//finde den Absender Nickname aus der Usertabelle
-								$querySender = "SELECT Username FROM $table_users WHERE ID = '$row[1]'";
+								$querySender = "SELECT Username FROM $table_users WHERE User_ID = '$row[1]'";
 								$resultSender = mysql_query($querySender);
 ?>
 					<tr valign="top">
